@@ -172,7 +172,7 @@
         "nrOfDisks": "[variables('diskSizes')['ASCS'].nrDisks]",
         "applicationSecurityGroupID": "[resourceId(parameters('virtualNetworkResourceGroupName'),'Microsoft.Network/applicationSecurityGroups',parameters('applicationSecurityGroupName'))]",
         "loadBalancerName": "[concat(variables('sapSystemIdLower'),'-ascs-lb-std')]",
-        "github": "https://raw.githubusercontent.com/Azure/SAP-on-Azure-Scripts-and-Utilities/master/ARMTemplates/serverTemplates/",
+        "github": "https://raw.githubusercontent.com/1lomeno3/SAP-on-Azure-Scripts-and-Utilities/master/ARMTemplates/serverTemplates/",
         "customImage": "[if(greater(length(trim(parameters('imageID'))),2),parameters('imageID'),'')]"
     },
     "resources": [
@@ -217,7 +217,7 @@
         {
             "name": "[variables('loadBalancerName')]",
             "type": "Microsoft.Network/loadBalancers",
-            "apiVersion": "2018-12-01",
+            "apiVersion": "2020-06-01",
             "condition": "[greater(parameters('virtualMachineCount'),1)]",
             "location": "[variables('locationName')]",
             "sku": {
@@ -233,7 +233,17 @@
                                 "id": "[variables('subnetRef')]"
                             },
                             "privateIPAddressVersion": "IPv4"
-                        }
+                        }                    
+                    },
+                    {
+                        "name": "[concat(variables('loadBalancerName'),'-frontend-ers')]",
+                        "properties": {
+                            "privateIPAllocationMethod": "Dynamic",
+                            "subnet": {
+                                "id": "[variables('subnetRef')]"
+                            },
+                            "privateIPAddressVersion": "IPv4"
+                        }                    
                     }
                 ],
                 "backendAddressPools": [
@@ -243,7 +253,7 @@
                 ],
                 "loadBalancingRules": [
                     {
-                        "name": "HanaLBRule",
+                        "name": "ASCSLBRule",
                         "properties": {
                             "frontendIPConfiguration": {
                                 "id": "[resourceId('Microsoft.Network/loadBalancers/frontendIPConfigurations', variables('loadBalancerName'),concat(variables('loadBalancerName'),'-frontend'))]"
@@ -260,6 +270,25 @@
                                 "id": "[resourceId('Microsoft.Network/loadBalancers/probes', variables('loadBalancerName'),concat(variables('loadBalancerName'),'-healthprobe'))]"
                             }
                         }
+                    },
+                    {
+                        "name": "ERSLBRule",
+                        "properties": {
+                            "frontendIPConfiguration": {
+                                "id": "[resourceId('Microsoft.Network/loadBalancers/frontendIPConfigurations', variables('loadBalancerName'),concat(variables('loadBalancerName'),'-frontend-ers'))]"
+                            },
+                            "backendAddressPool": {
+                                "id": "[resourceId('Microsoft.Network/loadBalancers/backendAddressPools', variables('loadBalancerName'), concat(variables('loadBalancerName'),'-backend'))]"
+                            },
+                            "frontendPort": 0,
+                            "backendPort": 0,
+                            "enableFloatingIP": true,
+                            "idleTimeoutInMinutes": 30,
+                            "protocol": "All",
+                            "probe": {
+                                "id": "[resourceId('Microsoft.Network/loadBalancers/probes', variables('loadBalancerName'),concat(variables('loadBalancerName'),'-healthprobe-ers'))]"
+                            }
+                        }
                     }
                 ],
                 "probes": [
@@ -268,6 +297,15 @@
                         "properties": {
                             "protocol": "Tcp",
                             "port": 62503,
+                            "intervalInSeconds": 5,
+                            "numberOfProbes": 2
+                        }
+                    },
+                    {
+                        "name": "[concat(variables('loadBalancerName'),'-healthprobe-ers')]",
+                        "properties": {
+                            "protocol": "Tcp",
+                            "port": 62513,
                             "intervalInSeconds": 5,
                             "numberOfProbes": 2
                         }

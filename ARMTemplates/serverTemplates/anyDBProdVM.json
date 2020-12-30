@@ -177,25 +177,25 @@
         "diskSizes": {
             "200": {
                 "vmSku": "Standard_E4s_v3",
-                "osdiskSizeGB": 63,
+                "osdiskSizeGB": 64,
                 "nrDisks": 2,
-                "lvm": ""
+                "lvm": "anydb-lvm-2datadisks.sh"
             },
             "500": {
                 "vmSku": "Standard_E8s_v3",
-                "osdiskSizeGB": 63,
+                "osdiskSizeGB": 64,
                 "nrDisks": 2,
-                "lvm": ""
+                "lvm": "anydb-lvm-2datadisks.sh"
             },
             "1024": {
                 "vmSku": "Standard_E16s_v3",
-                "osdiskSizeGB": 63,
+                "osdiskSizeGB": 64,
                 "nrDisks": 3,
                 "lvm": "anydb-lvm-2datadisks.sh"
             },
             "2048": {
                 "vmSku": "Standard_E32s_v3",
-                "osdiskSizeGB": 63,
+                "osdiskSizeGB": 64,
                 "nrDisks": 3,
                 "lvm": "anydb-lvm-2datadisks.sh"
             },
@@ -250,7 +250,7 @@
         "nrOfDisks": "[variables('diskSizes')[parameters('dbSize')].nrDisks]",
         "applicationSecurityGroupID": "[resourceId(parameters('virtualNetworkResourceGroupName'),'Microsoft.Network/applicationSecurityGroups',parameters('applicationSecurityGroupName'))]",
         "loadBalancerName": "[concat(variables('sapSystemIdLower'),'-db-lb-std')]",
-        "github": "https://raw.githubusercontent.com/Azure/SAP-on-Azure-Scripts-and-Utilities/master/ARMTemplates/serverTemplates/",
+        "github": "https://raw.githubusercontent.com/1lomeno3/SAP-on-Azure-Scripts-and-Utilities/master/ARMTemplates/serverTemplates/",
         "customImage": "[if(greater(length(trim(parameters('imageID'))),2),parameters('imageID'),'')]"
 
 
