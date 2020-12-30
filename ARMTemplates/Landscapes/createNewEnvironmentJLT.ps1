@@ -27,6 +27,9 @@ $adminUserName = "jatretin"
 $keyVaultSecretName = "myVMPassword"
 $diagnosticLogStorageAccount = "mydiagstorageacc"
 
+# Set the environment for tagging purposes: "DEV", "QA", "PRD", "SBX", "TST"
+$EnvType = "PRD"
+
 $hasPublicIP = $false
 $setDNS = $false
 $WebDispatch = $false
@@ -239,7 +242,8 @@ Copy-Item "..\serverTemplates\parameterFiles\appVM.parameters.json" $appTemplate
 (Get-Content $appTemplateFilePath).replace('"[VMCount]"', $NumberOfAppServers.ToString()) | Set-Content $appTemplateFilePath        
 (Get-Content $appTemplateFilePath).replace('"[HASPUBLICIP]"', $hasPublicIP.ToString().ToLower()) | Set-Content $appTemplateFilePath        
 (Get-Content $appTemplateFilePath).replace('"[DNS]"', $setDNS.ToString().ToLower()) | Set-Content $appTemplateFilePath        
-    
+
+
 
 $ascsServerName = ""
 $ASCSDeploymentScript = ""

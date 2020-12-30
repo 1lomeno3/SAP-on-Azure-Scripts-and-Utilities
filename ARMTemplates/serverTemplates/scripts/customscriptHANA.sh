@@ -97,8 +97,9 @@ function mountAzurefiles()
 {
     log "mounting Azure File share start"
     
-    sudo mkdir -p /mnt/mysapfileshare/jltshare
-    sudo mount -t nfs mysapfileshare.file.core.windows.net:/mysapfileshare/jltshare /mnt/mysapfileshare/jltshare -o vers=4,minorversion=1,sec=sys
+    mkdir /media
+    mount -t nfs mysapfileshare.file.core.windows.net:/mysapfileshare/jltshare/media media -o vers=4,minorversion=1,sec=sys
+    bash -c 'echo "mysapfileshare.file.core.windows.net:/mysapfileshare/jltshare/media /media  nfs vers=4,minorversion=1,sec=sys" >> /etc/fstab'
 
     log "mounting Azure File share done"
 }
@@ -107,18 +108,24 @@ function prepareSAPBins()
 {
     log "preparing SAP Medias"
 
-    mkdir /media
-    cd /media
-    
-    rsync --progress /mnt/mysapstorageaccount/Media/SAPCAR .
-    rsync --progress /mnt/mysapstorageaccount/Media/HANA/IMDB_SERVER20_043_0-80002031.SAR .
-    rsync --progress /mnt/mysapstorageaccount/Media/HANA/IMDB_CLIENT20_004_162-80002082.SAR .
-    rsync --progress /mnt/mysapstorageaccount/Media/HANA/HWCCT_237_0-20011536.SAR .
-    
-    ./SAPCAR -xvf IMDB_CLIENT20_004_162-80002082.SAR
-    ./SAPCAR -xvf IMDB_SERVER20_043_0-80002031.SAR
-    ./SAPCAR -xvf IMDB_SERVER20_043_0-80002031.SAR SIGNATURE.SMF -manifest SIGNATURE.SMF
+    mkdir /mnt/media
+    cd /mnt/media
 
+    rsync --progress /media/SAPCAR .
+    rsync --progress -r /media/SWPM .
+
+    cd /mnt/media/SWPM
+    ../SAPCAR -xvf *.SAR
+
+    if [ $insttype == "db"]; then
+        cd /mnt/media
+        rsync --progress -r /media/HANA .
+        
+        cd HANA
+        ../SAPCAR -xvf IMDB_CLIENT20_004_162-80002082.SAR
+        ../SAPCAR -xvf IMDB_SERVER20_043_0-80002031.SAR
+        ../SAPCAR -xvf IMDB_SERVER20_043_0-80002031.SAR SIGNATURE.SMF -manifest SIGNATURE.SMF
+    fi
 
     useradd admin
     echo admin:Heslo.123 | chpasswd
