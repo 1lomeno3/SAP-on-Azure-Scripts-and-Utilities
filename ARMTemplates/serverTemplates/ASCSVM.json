@@ -447,6 +447,32 @@
             "tags": "[variables('allVMTags')]"
         },
         {
+            "name": "[concat(variables('sapMachineName'),'-',padLeft(copyIndex('extVMLoop',1),2,'0'),'/customscript')]",
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "apiVersion": "2019-07-01",
+            "location": "[variables('locationName')]",
+            "dependsOn": [
+                "[concat(variables('sapMachineName'),'-',padLeft(copyIndex('extVMLoop',1),2,'0'))]"
+            ],
+            "properties": {
+                "publisher": "Microsoft.Azure.Extensions",
+                "type": "CustomScript",
+                "typeHandlerVersion": "2.1",
+                "autoUpgradeMinorVersion": true,
+                "settings": {
+                    "fileUris": [
+                        "[concat(variables('github'), 'scripts/customscriptAnyDB.sh')]"
+
+                    ],
+                    "commandToExecute": "[concat('bash ', variables('github'), 'scripts/customscriptAnyDB.sh')]"
+                }
+            },
+            "copy": {
+                "name": "extVMLoop",
+                "count": "[parameters('virtualMachineCount')]"
+            }
+        },
+        {
             "name": "[concat('AddDisks-',variables('sapMachineName'),'-',padLeft(copyIndex(1),2,'0'))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2018-05-01",
