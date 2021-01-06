@@ -156,13 +156,13 @@ $DBDeploymentScript = ""
 $dbServerName = ""
 switch ($Database) {
     HanaProd {
-        $dbTemplateFilePath = [System.String]::Format('{0}\{1}\{1}.HanaProdVM.parameters.json', $s, $SID)
+        $dbTemplateFilePath = [System.String]::Format('{0}\{1}\{1}.hanaProdVM.parameters.json', $s, $SID)
         Copy-Item "..\serverTemplates\parameterFiles\hanaProdVM.parameters.json" $dbTemplateFilePath 
         Write-Host "Using a Hana production database"
         break;
     }
     HanaDev {
-        $dbTemplateFilePath = [System.String]::Format('{0}\{1}\{1}.HanaDevVM.parameters.json', $s, $SID)
+        $dbTemplateFilePath = [System.String]::Format('{0}\{1}\{1}.hanaDevVM.parameters.json', $s, $SID)
         Copy-Item "..\serverTemplates\parameterFiles\hanaDevVM.parameters.json" $dbTemplateFilePath 
         Write-Host "Using a Hana development database"
         $DBServerImage = "hanaDevVM"

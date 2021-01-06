@@ -397,7 +397,7 @@
                         "[concat(variables('github'), 'scripts/customscriptAnyDB.sh')]"
 
                     ],
-                    "commandToExecute": "[concat('bash ', variables('github'), 'scripts/customscriptAnyDB.sh')]"
+                    "commandToExecute": "sh customscriptAnyDB.sh"
                 }
             },
             "copy": {
