@@ -529,7 +529,8 @@
             "apiVersion": "2019-07-01",
             "location": "[variables('locationName')]",
             "dependsOn": [
-                "[concat(variables('sapMachineName'),'-',padLeft(copyIndex('extVMLoop',1),2,'0'))]"
+                "[concat(variables('sapMachineName'),'-',padLeft(copyIndex('extVMLoop',1),2,'0'))]",
+                "[concat(variables('sapMachineName'),'-',padLeft(copyIndex('extVMLoop',1),2,'0'),'/lvmExtension')]"
             ],
             "properties": {
                 "publisher": "Microsoft.Azure.Extensions",

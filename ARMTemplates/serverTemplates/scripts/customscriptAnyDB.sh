@@ -52,6 +52,7 @@ function installPackages()
     else 
         #RHEL
         yum update -y
+        yum update rhui-azure-rhel8-sap-ha -y # workaround for missing repo
 	    	    
         #yum in -y gtk2 libicu xulrunner sudo tcsh libssh2 expect cairo graphviz iptraf-ng krb5-workstation krb5-libs libpng12 nfs-utils lm_sensors rsyslog openssl PackageKit-gtk3-module libcanberra-gtk2 libtool-ltdl xorg-x11-xauth numactl xfsprogs net-tools bind-utils compat-sap-c++-7 libatomic tuned-profiles-sap-hana cifs-utils
         yum in -y uuidd libnsl tcsh psmisc nfs-utils bind-utils cifs-utils 
@@ -75,6 +76,13 @@ function installPackages()
         #scl enable rh-dotnet22 bash
 
     fi
+
+    #azcopy
+    cd /tmp
+    wget -O azcopy.tar.gz https://aka.ms/downloadazcopy-v10-linux 
+	tar -xf azcopy.tar.gz
+    mv azcopy_linux_* azcopy
+    export PATH=$PATH:/tmp/azcopy
     
     log "installPackages done"
 }
